@@ -38,3 +38,9 @@ Backstage runs locally with GitHub sign-in, PostgreSQL persistence, secrets in e
 - `idp-platform` and `idp-gitops` are both `partOf` `idp-demo`, owned by `platform-team`.
 - Note: `User`/`Group` need explicit `rules: allow` on a catalog location; `System` is allowed by default.
 - Note: Catalog Graph page needs a root entity (`rootEntityRefs[]=...`), otherwise it renders empty.
+
+## 2026-10-02 — Phase 2, step 2: FastAPI skeleton
+- `templates/fastapi-service/skeleton/`: FastAPI app (`/`, `/health`), pytest tests, pinned deps (prod vs dev), non-root Dockerfile, `catalog-info.yaml` (owner + `system: idp-demo`), README.
+- Placeholders: `${{ values.name }}`, `${{ values.description }}`, `${{ values.owner }}`.
+- Tested locally by rendering placeholders with `sed`: 2 tests passed, `/docs` OK.
+- Note: `httpx2` instead of `httpx` for FastAPI's TestClient (httpx is deprecated there).
