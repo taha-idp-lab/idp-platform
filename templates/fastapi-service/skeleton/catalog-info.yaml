@@ -1,0 +1,15 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{ values.name }}
+  description: ${{ values.description }}
+  annotations:
+    github.com/project-slug: taha-idp-lab/${{ values.name }}
+  tags:
+    - python
+    - fastapi
+spec:
+  type: service
+  lifecycle: experimental
+  owner: ${{ values.owner }}
+  system: idp-demo
