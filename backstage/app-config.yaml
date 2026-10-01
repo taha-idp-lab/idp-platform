@@ -164,9 +164,18 @@ techdocs:
 
 auth:
   # see https://backstage.io/docs/auth/ to learn about auth providers
+  environment: development
   providers:
     # See https://backstage.io/docs/auth/guest/provider
     guest: {}
+    # See https://backstage.io/docs/auth/github/provider
+    github:
+      development:
+        clientId: ${AUTH_GITHUB_CLIENT_ID}
+        clientSecret: ${AUTH_GITHUB_CLIENT_SECRET}
+        signIn:
+          resolvers:
+            - resolver: usernameMatchingUserEntityName
   # see https://backstage.io/docs/ai/mcp-actions#client-id-metadata-documents
   # to learn more about client id metadata documents
   clientIdMetadataDocuments:
@@ -203,6 +212,12 @@ catalog:
     # Local example organizational data
     - type: file
       target: ../../examples/org.yaml
+      rules:
+        - allow: [User, Group]
+    
+    # IDP organization: users and teams
+    - type: file
+      target: ../../../catalog/org.yaml
       rules:
         - allow: [User, Group]
 
