@@ -22,3 +22,13 @@
   - `database:` mis-indented in `app-config.yaml` → Backstage silently fell back to in-memory SQLite (no error!).
   - A Windows PostgreSQL already listens on 5432 and is reachable from WSL in mirrored mode → container moved to 5433.
   - After `wsl --shutdown`, Docker Desktop's WSL integration timed out (0x8007274c). Fix: quit Docker Desktop → `wsl --shutdown` → open Ubuntu → restart Docker Desktop.
+
+## 2026-10-01 — Phase 1: GitHub integration
+- GitHub App `idpbackstagetaha` created with `backstage-cli create-github-app taha-idp-lab`, installed on the org (all repos).
+- Config: `apps: - $include: <credentials file>` (file git-ignored).
+- `allowedInstallationOwners` lives inside the credentials file: `$include` can't have sibling keys.
+- Why an App over a PAT: dedicated identity, scoped to one org, short-lived tokens, not tied to a person.
+- Verified by registering `idp-platform` in the catalog via its `catalog-info.yaml` (owner `group:platform-team`).
+
+## ✅ Phase 1 closed
+Backstage runs locally with GitHub sign-in, PostgreSQL persistence, secrets in env/ignored files, and a GitHub App integration.

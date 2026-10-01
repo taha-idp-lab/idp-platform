@@ -36,7 +36,7 @@ See [`docs/architecture.md`](docs/architecture.md).
 ## Roadmap
 
 - [x] **Phase 0** — Environment, repos, architecture
-- [ ] **Phase 1** — Backstage running with GitHub auth and PostgreSQL
+- [x] **Phase 1** — Backstage running with GitHub auth and PostgreSQL
 - [ ] **Phase 2 (v1)** — Catalog + first template: one click creates a repo
 - [ ] **Phase 3** — Production-ready skeleton (CI, Trivy, Helm, `/metrics`, TechDocs)
 - [ ] **Phase 4 (v2)** — GitOps: form → service running in the cluster
