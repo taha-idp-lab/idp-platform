@@ -32,3 +32,9 @@
 
 ## ✅ Phase 1 closed
 Backstage runs locally with GitHub sign-in, PostgreSQL persistence, secrets in env/ignored files, and a GitHub App integration.
+
+## 2026-10-01 — Phase 2, step 1: catalog structure
+- Added `team-backend` group (future owner of generated services) and `idp-demo` System (`catalog/systems.yaml`).
+- `idp-platform` and `idp-gitops` are both `partOf` `idp-demo`, owned by `platform-team`.
+- Note: `User`/`Group` need explicit `rules: allow` on a catalog location; `System` is allowed by default.
+- Note: Catalog Graph page needs a root entity (`rootEntityRefs[]=...`), otherwise it renders empty.
