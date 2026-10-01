@@ -44,3 +44,10 @@ Backstage runs locally with GitHub sign-in, PostgreSQL persistence, secrets in e
 - Placeholders: `${{ values.name }}`, `${{ values.description }}`, `${{ values.owner }}`.
 - Tested locally by rendering placeholders with `sed`: 2 tests passed, `/docs` OK.
 - Note: `httpx2` instead of `httpx` for FastAPI's TestClient (httpx is deprecated there).
+
+## 2026-10-02 — Phase 2, steps 3–4: first template run 🎉
+- `templates/fastapi-service/template.yaml`: form (name with regex, description, OwnerPicker on Groups) → `fetch:template` → `publish:github` → `catalog:register`.
+- `publish:github` defaults are private repo + branch protection, which fails on a free GitHub org → set `repoVisibility: public`, `protectDefaultBranch: false` (to revisit in Phase 6).
+- First run failed: `Resource not accessible by integration` → GitHub App needed **Administration: Read & write**; new permissions must be accepted on the org installation, then restart Backstage (cached app token).
+- ✅ `orders-api` created in `taha-idp-lab`, registered in the catalog (owner `team-backend`, system `idp-demo`), cloned and `pytest` → 2 passed.
+- ⏱️ Time from form submission to registered repo: **under 10 seconds**.
