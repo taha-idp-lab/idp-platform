@@ -1,0 +1,11 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: idp-platform
+  description: Backstage portal of the Internal Developer Platform
+  annotations:
+    github.com/project-slug: taha-idp-lab/idp-platform
+spec:
+  type: website
+  lifecycle: experimental
+  owner: group:platform-team
