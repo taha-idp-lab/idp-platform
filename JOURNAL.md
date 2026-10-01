@@ -51,3 +51,10 @@ Backstage runs locally with GitHub sign-in, PostgreSQL persistence, secrets in e
 - First run failed: `Resource not accessible by integration` → GitHub App needed **Administration: Read & write**; new permissions must be accepted on the org installation, then restart Backstage (cached app token).
 - ✅ `orders-api` created in `taha-idp-lab`, registered in the catalog (owner `team-backend`, system `idp-demo`), cloned and `pytest` → 2 passed.
 - ⏱️ Time from form submission to registered repo: **under 10 seconds**.
+
+## 2026-10-02 — Phase 2, step 5: robustness
+- Form validation: regex `^[a-z0-9]+(-[a-z0-9]+)*$` + `maxLength: 40` reject uppercase, `_`, leading/trailing/double dashes. Valid for GitHub repo, Backstage entity and future K8s namespace names.
+- Re-running with an existing name: fails at `publish:github` ("name already exists"), `register` skipped, existing repo untouched.
+- Scaffolder runs steps in order and stops at the first failure, but does NOT roll back previous steps → cleanup procedure needed.
+- Cleanup procedure (tested with `test-cleanup`): 1) Backstage: entity ⋮ → Unregister entity → **Unregister Location**; 2) GitHub: delete the repo. Order matters (otherwise orphan entity with refresh errors).
+- Convention: prefix throwaway services with `test-`.
