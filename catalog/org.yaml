@@ -18,3 +18,12 @@ metadata:
 spec:
   type: team
   children: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: team-backend
+  description: Product team that builds backend services
+spec:
+  type: team
+  children: []

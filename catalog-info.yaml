@@ -9,3 +9,4 @@ spec:
   type: website
   lifecycle: experimental
   owner: group:platform-team
+  system: idp-demo

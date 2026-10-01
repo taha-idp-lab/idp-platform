@@ -1,0 +1,7 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: idp-demo
+  description: Internal Developer Platform and the demo services it generates
+spec:
+  owner: group:platform-team
