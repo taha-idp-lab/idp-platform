@@ -1,5 +1,8 @@
 FROM python:3.12-slim
 
+# Apply the latest Debian security fixes (the base image can lag behind)
+RUN apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 # Install dependencies first to benefit from Docker layer caching
