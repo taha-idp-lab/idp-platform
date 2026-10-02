@@ -48,6 +48,10 @@ spec:
       action: fetch:template
       input:
         url: ./skeleton
+        # GitHub Actions uses the same ${{ }} syntax as Backstage templating:
+        # copy workflow files as-is instead of rendering them.
+        copyWithoutTemplating:
+          - .github/workflows/*
         values:
           name: ${{ parameters.name }}
           description: ${{ parameters.description }}
@@ -62,6 +66,14 @@ spec:
         defaultBranch: main
         repoVisibility: public
         protectDefaultBranch: false
+
+    # GitHub needs a moment before the new repo's files are readable via the API
+    # (eventual consistency). Without this, catalog:register fails intermittently with a 400.
+    - id: wait
+      name: Wait for GitHub to index the repository
+      action: debug:wait
+      input:
+        seconds: 5
 
     - id: register
       name: Register in the catalog
