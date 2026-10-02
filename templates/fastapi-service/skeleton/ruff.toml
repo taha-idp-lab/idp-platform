@@ -1,0 +1,6 @@
+# Lint rules shared by every service generated from this template
+line-length = 100
+target-version = "py312"
+
+[lint]
+select = ["E", "F", "I", "B", "UP"]   # pycodestyle, pyflakes, isort, bugbear, pyupgrade
