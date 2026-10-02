@@ -58,3 +58,9 @@ Backstage runs locally with GitHub sign-in, PostgreSQL persistence, secrets in e
 - Scaffolder runs steps in order and stops at the first failure, but does NOT roll back previous steps → cleanup procedure needed.
 - Cleanup procedure (tested with `test-cleanup`): 1) Backstage: entity ⋮ → Unregister entity → **Unregister Location**; 2) GitHub: delete the repo. Order matters (otherwise orphan entity with refresh errors).
 - Convention: prefix throwaway services with `test-`.
+
+## ✅ Phase 2 closed — v1
+Deliverable reached: one click in Backstage creates a repository from the FastAPI skeleton and registers it in the catalog (owner team + `idp-demo` system), in about 10 seconds.
+- Docs: `docs/how-to-create-a-service.md` (developer golden path, troubleshooting, cleanup).
+- Pending: screenshots (placeholders left as HTML comments).
+- Next (Phase 3): production-ready skeleton — CI (lint, tests, build, Trivy, push to GHCR), Helm chart, `/metrics`, TechDocs, CODEOWNERS.
