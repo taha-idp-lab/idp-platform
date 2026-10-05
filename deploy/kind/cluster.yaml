@@ -1,0 +1,17 @@
+# Local Kubernetes cluster for the IDP (kind = Kubernetes IN Docker)
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: idp
+nodes:
+  - role: control-plane
+    labels:
+      ingress-ready: "true"
+    # Expose the cluster's HTTP/HTTPS ports on the host, for an ingress controller later.
+    # 8080/8443 instead of 80/443 to avoid conflicts with services already running on Windows.
+    extraPortMappings:
+      - containerPort: 80
+        hostPort: 8080
+        protocol: TCP
+      - containerPort: 443
+        hostPort: 8443
+        protocol: TCP
