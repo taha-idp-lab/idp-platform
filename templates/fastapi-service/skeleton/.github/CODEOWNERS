@@ -1,0 +1,2 @@
+# Every file in this repository is owned by the team that owns the service.
+* @taha-idp-lab/${{ values.owner | parseEntityRef | pick('name') }}

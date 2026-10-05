@@ -67,6 +67,10 @@ spec:
         defaultBranch: main
         repoVisibility: public
         protectDefaultBranch: false
+        # The owner team gets write access (required for CODEOWNERS to be valid)
+        collaborators:
+          - team: ${{ parameters.owner }}
+            access: push
 
     # GitHub needs a moment before the new repo's files are readable via the API
     # (eventual consistency). Without this, catalog:register fails intermittently with a 400.
