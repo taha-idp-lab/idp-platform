@@ -72,3 +72,10 @@ Deliverable reached: one click in Backstage creates a repository from the FastAP
 - GitHub App needed **Workflows: Read & write** to push workflow files.
 - 🛡️ First run of `test-ci` was BLOCKED by Trivy: CVE-2026-103111 (HIGH) in `libpcre2` from the Debian base image (fix available, base image not rebuilt yet). Fix: `apt-get upgrade` in the Dockerfile. Trade-off: less reproducible builds, but security fixes applied at build time.
 - ✅ `test-ci`: CI green, image published to `ghcr.io/taha-idp-lab/test-ci`.
+
+## 2026-10-05 — Phase 3, step 3: Helm chart
+- `skeleton/chart/`: Deployment (liveness/readiness on `/health`, requests/limits, non-root UID 1000, no privilege escalation, drop ALL caps), Service (80 → 8000), Ingress (disabled by default).
+- Labels in `_helpers.tpl`; selector labels kept minimal (immutable after first deploy); `backstage.io/kubernetes-id` on all objects for the Phase 5 Kubernetes plugin.
+- Backstage renders `Chart.yaml`/`values.yaml`; `chart/templates/*` added to `copyWithoutTemplating` (Helm `{{ }}`).
+- Dockerfile: explicit `--uid 1000` to match `runAsUser`.
+- Validated with `helm lint` + `helm template` (no cluster needed).
