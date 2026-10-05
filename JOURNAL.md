@@ -64,3 +64,11 @@ Deliverable reached: one click in Backstage creates a repository from the FastAP
 - Docs: `docs/how-to-create-a-service.md` (developer golden path, troubleshooting, cleanup).
 - Pending: screenshots (placeholders left as HTML comments).
 - Next (Phase 3): production-ready skeleton — CI (lint, tests, build, Trivy, push to GHCR), Helm chart, `/metrics`, TechDocs, CODEOWNERS.
+
+## 2026-10-02 — Phase 3, steps 1–2: metrics, lint, CI
+- Skeleton: `/metrics` (prometheus-fastapi-instrumentator), `ruff.toml` (E, F, I, B, UP), 3 tests.
+- CI (`.github/workflows/ci.yaml`): lint + tests → build → Trivy (CRITICAL/HIGH, ignore-unfixed) → push to GHCR on `main` only. Actions pinned by commit SHA; least-privilege permissions (`packages: write` only on the build job).
+- `${{ }}` conflict with Backstage templating → `copyWithoutTemplating: [.github/workflows/*]` in `fetch:template`.
+- GitHub App needed **Workflows: Read & write** to push workflow files.
+- 🛡️ First run of `test-ci` was BLOCKED by Trivy: CVE-2026-103111 (HIGH) in `libpcre2` from the Debian base image (fix available, base image not rebuilt yet). Fix: `apt-get upgrade` in the Dockerfile. Trade-off: less reproducible builds, but security fixes applied at build time.
+- ✅ `test-ci`: CI green, image published to `ghcr.io/taha-idp-lab/test-ci`.
