@@ -12,7 +12,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app ./app
 
 # Run as a non-root user
-RUN useradd --create-home appuser
+RUN useradd --create-home --uid 1000 appuser
 USER appuser
 
 EXPOSE 8000

@@ -52,6 +52,7 @@ spec:
         # copy workflow files as-is instead of rendering them.
         copyWithoutTemplating:
           - .github/workflows/*
+          - chart/templates/*
         values:
           name: ${{ parameters.name }}
           description: ${{ parameters.description }}
