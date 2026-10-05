@@ -79,3 +79,15 @@ Deliverable reached: one click in Backstage creates a repository from the FastAP
 - Backstage renders `Chart.yaml`/`values.yaml`; `chart/templates/*` added to `copyWithoutTemplating` (Helm `{{ }}`).
 - Dockerfile: explicit `--uid 1000` to match `runAsUser`.
 - Validated with `helm lint` + `helm template` (no cluster needed).
+
+## 2026-10-05 — Phase 3, steps 4–5: TechDocs, CODEOWNERS
+- TechDocs: `mkdocs.yml` + `docs/index.md` + `docs/runbook.md` in the skeleton, `backstage.io/techdocs-ref: dir:.` annotation. Built on demand by Backstage (generator `runIn: docker`).
+- CODEOWNERS: `* @taha-idp-lab/${{ values.owner | parseEntityRef | pick('name') }}`.
+- GitHub teams `platform-team` / `team-backend` created with the same names as the Backstage Groups.
+- `publish:github` → `collaborators: [{ team: <owner>, access: push }]` (write access is required for CODEOWNERS to be valid). Failures here are only logged as warnings ("Skipping push access…"), not errors.
+- GitHub App: + Organization **Members: Read-only**.
+- Ownership is declared once (form) and enforced everywhere: catalog, repo permissions, review requests.
+
+## ✅ Phase 3 closed
+Every generated service now ships with: lint + tests, CI (build, Trivy scan, push to GHCR), Helm chart (probes, limits, non-root), `/metrics`, TechDocs + runbook, CODEOWNERS.
+Next (Phase 4): kind cluster + ArgoCD + ApplicationSet → form-to-running-pod without manual steps.

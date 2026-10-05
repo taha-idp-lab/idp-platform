@@ -46,7 +46,7 @@ See [`docs/architecture.md`](docs/architecture.md).
 - [x] **Phase 0** — Environment, repos, architecture
 - [x] **Phase 1** — Backstage running with GitHub auth and PostgreSQL
 - [x] **Phase 2 (v1)** — Catalog + first template: one click creates a repo
-- [ ] **Phase 3** — Production-ready skeleton (CI, Trivy, Helm, `/metrics`, TechDocs)
+- [x] **Phase 3** — Production-ready skeleton (CI, Trivy, Helm, `/metrics`, TechDocs)
 - [ ] **Phase 4 (v2)** — GitOps: form → service running in the cluster
 - [ ] **Phase 5 (v3)** — Visibility: Kubernetes, ArgoCD, GitHub Actions plugins + Grafana
 - [ ] **Phase 6** — Second template, demo scenarios, final docs
