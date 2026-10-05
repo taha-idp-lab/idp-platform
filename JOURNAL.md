@@ -91,3 +91,10 @@ Deliverable reached: one click in Backstage creates a repository from the FastAP
 ## ✅ Phase 3 closed
 Every generated service now ships with: lint + tests, CI (build, Trivy scan, push to GHCR), Helm chart (probes, limits, non-root), `/metrics`, TechDocs + runbook, CODEOWNERS.
 Next (Phase 4): kind cluster + ArgoCD + ApplicationSet → form-to-running-pod without manual steps.
+
+## 2026-10-05 — Phase 4, steps 3–4: ApplicationSet + first GitOps deployment 🎉
+- `idp-gitops/bootstrap/applicationset-dev.yaml`: Git directory generator on `apps/*` → one Application `<service>-dev` per folder, namespace = service name (`CreateNamespace=true`), automated sync with `prune` + `selfHeal`.
+- Multi-source: Helm chart from the service repo (`chart/`), values from `idp-gitops` (`$values/apps/<service>/values-dev.yaml`).
+- Only manual `kubectl apply` of the project: the ApplicationSet itself (bootstrap).
+- `idp-gitops` made public so ArgoCD can read it (production alternative: org-wide repo credential template).
+- ✅ `test-docs` deployed by merging a PR that adds `apps/test-docs/values-dev.yaml` (image tag = commit SHA, not `latest`, for traceability and rollback). App Synced + Healthy, pod 1/1 Ready.
