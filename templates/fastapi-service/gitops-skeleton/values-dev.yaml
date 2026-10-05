@@ -1,0 +1,9 @@
+# Dev environment values for ${{ values.name }}.
+# Overrides chart/values.yaml from https://github.com/taha-idp-lab/${{ values.name }}
+image:
+  # The first CI run publishes the image a few minutes after the repository is created.
+  # Until then the pod retries the pull (ImagePullBackOff is expected for a short while).
+  tag: latest
+  pullPolicy: Always
+
+replicaCount: 1
