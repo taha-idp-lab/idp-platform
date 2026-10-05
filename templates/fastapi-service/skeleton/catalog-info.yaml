@@ -5,6 +5,7 @@ metadata:
   description: ${{ values.description }}
   annotations:
     github.com/project-slug: taha-idp-lab/${{ values.name }}
+    backstage.io/techdocs-ref: dir:.
   tags:
     - python
     - fastapi
