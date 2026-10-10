@@ -1,0 +1,14 @@
+# ArgoCD Helm values for the local kind cluster.
+# Chart: argo/argo-cd 10.9.6 (ArgoCD v3.5.3)
+
+configs:
+  params:
+    # TLS is not needed locally (accessed through kubectl port-forward).
+    # In production, TLS would be terminated by an ingress controller.
+    server.insecure: true
+
+# Disabled to save resources: no SSO (Dex) and no notifications needed locally.
+dex:
+  enabled: false
+notifications:
+  enabled: false
