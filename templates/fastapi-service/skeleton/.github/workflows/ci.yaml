@@ -84,3 +84,60 @@ jobs:
       - name: Push image
         if: github.ref == 'refs/heads/main'
         run: docker push --all-tags ${{ env.IMAGE }}
+
+  deploy-dev:
+    name: Deploy to dev (GitOps)
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    # One deployment at a time per service; never cancel a deployment in progress
+    concurrency:
+      group: deploy-dev-${{ github.repository }}
+      cancel-in-progress: false
+    steps:
+      # Short-lived token from the dedicated "gitops bot" GitHub App,
+      # scoped to the idp-gitops repository only (contents: write)
+      - name: Get GitOps bot token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.GITOPS_APP_CLIENT_ID }}
+          private-key: ${{ secrets.GITOPS_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: idp-gitops
+          permission-contents: write
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: ${{ github.repository_owner }}/idp-gitops
+          token: ${{ steps.app-token.outputs.token }}
+          path: gitops
+
+      - name: Update image tag in idp-gitops
+        working-directory: gitops
+        env:
+          SERVICE: ${{ github.event.repository.name }}
+          TAG: ${{ github.sha }}
+          SOURCE_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
+        run: |
+          FILE="apps/${SERVICE}/values-dev.yaml"
+          if [ ! -f "$FILE" ]; then
+            echo "::notice::${FILE} not found: the deployment PR has not been merged yet. Skipping."
+            exit 0
+          fi
+          yq -i '.image.tag = strenv(TAG) | .image.tag style="double" | .image.pullPolicy = "IfNotPresent"' "$FILE"
+          if git diff --quiet; then
+            echo "Already deployed: ${TAG}"
+            exit 0
+          fi
+          git config user.name "idp-gitops-bot"
+          git config user.email "idp-gitops-bot@users.noreply.github.com"
+          git commit -am "deploy(${SERVICE}): dev -> ${TAG::7}" -m "Source: ${SOURCE_URL}"
+          # Other services may push at the same time: rebase and retry
+          for attempt in 1 2 3 4 5; do
+            git push && exit 0
+            echo "Push rejected (attempt ${attempt}), rebasing..."
+            git pull --rebase
+          done
+          echo "::error::Could not push to idp-gitops"
+          exit 1
