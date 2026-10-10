@@ -98,3 +98,10 @@ Next (Phase 4): kind cluster + ArgoCD + ApplicationSet → form-to-running-pod w
 - Only manual `kubectl apply` of the project: the ApplicationSet itself (bootstrap).
 - `idp-gitops` made public so ArgoCD can read it (production alternative: org-wide repo credential template).
 - ✅ `test-docs` deployed by merging a PR that adds `apps/test-docs/values-dev.yaml` (image tag = commit SHA, not `latest`, for traceability and rollback). App Synced + Healthy, pod 1/1 Ready.
+
+## 2026-10-10 — Phase 4, step 5: template opens the GitOps PR 🎉
+- Template split into two workspaces: `service/` → `publish:github`, `gitops/` (from `gitops-skeleton/`) → `publish:github:pull-request` into `idp-gitops` at `apps/<name>/`.
+- Initial `values-dev.yaml` uses `tag: latest` + `pullPolicy: Always`: the image doesn't exist yet when the template runs (first CI ~3 min).
+- GitHub App: + Pull requests: Read & write.
+- `teamReviewers` failed: "Reviews may only be requested from collaborators" → platform-team had no access to idp-gitops. Fix: team access (Maintain) + CODEOWNERS on idp-gitops. The PR was still created (the action only logs reviewer errors).
+- ✅ `test-gitops`: form → repo + CI + catalog + deployment PR → merge → ArgoCD → pod Running. The ApplicationSet now manages 2 apps.
