@@ -105,3 +105,11 @@ Next (Phase 4): kind cluster + ArgoCD + ApplicationSet → form-to-running-pod w
 - GitHub App: + Pull requests: Read & write.
 - `teamReviewers` failed: "Reviews may only be requested from collaborators" → platform-team had no access to idp-gitops. Fix: team access (Maintain) + CODEOWNERS on idp-gitops. The PR was still created (the action only logs reviewer errors).
 - ✅ `test-gitops`: form → repo + CI + catalog + deployment PR → merge → ArgoCD → pod Running. The ApplicationSet now manages 2 apps.
+
+## 2026-10-10 — Phase 4, step 6: continuous deployment to dev 🎉
+- New CI job `deploy-dev` (after `build`, `main` only): writes the new image tag (commit SHA) into `idp-gitops/apps/<service>/values-dev.yaml` and pushes a commit `deploy(<service>): dev -> <sha7>` with a link to the source commit. ArgoCD then syncs.
+- Credentials: dedicated GitHub App `idp-gitops-bot` (Contents: write, installed on `idp-gitops` only), not the Backstage App. Org secret `GITOPS_APP_PRIVATE_KEY` + org variable `GITOPS_APP_CLIENT_ID` shared with all repos; token minted per run with `actions/create-github-app-token` (1 h lifetime, scoped to one repo and one permission).
+- Dev = direct commit (continuous deployment); PRs reserved for promotion to other environments.
+- Robustness: `concurrency` group per service, `git pull --rebase` retry loop for concurrent deploys, skip gracefully if the deployment PR isn't merged yet.
+- Gotcha: a SHA like `1234567e8…` would be parsed by YAML as a float → `yq ... style="double"` keeps the tag a string.
+- ✅ `test-gitops`: code change pushed → 3 green jobs → bot commit in idp-gitops → new pod → "Hello from version 2, deployed by GitOps".
