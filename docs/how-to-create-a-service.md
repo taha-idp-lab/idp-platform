@@ -66,6 +66,18 @@ ruff check . && ruff format --check .
 uvicorn app.main:app --reload   # http://localhost:8000/docs
 ```
 
+## 6. Deploy
+
+Your service is **not deployed** until the platform team approves it:
+
+1. The template opened a PR in [`idp-gitops`](https://github.com/taha-idp-lab/idp-gitops) adding `apps/<name>/values-dev.yaml`.
+2. Wait for your first CI run to be green, then ask `platform-team` to merge the PR.
+3. ArgoCD deploys the service to the `dev` environment, in the namespace `<name>`.
+
+After that, **every push to `main` is deployed to dev automatically**: the CI's *Deploy to dev* job commits the new image tag (the commit SHA) to `idp-gitops`, and ArgoCD syncs it.
+
+**Rollback:** in `idp-gitops`, revert the `deploy(<name>): dev -> <sha>` commit you want to undo (`git revert <hash>`). Always target the commit by its hash, and note that the very first deployment uses `latest`, so you can only roll back between two SHA deployments.
+
 ## Troubleshooting
 
 | Problem | Meaning | Fix |
@@ -76,6 +88,9 @@ uvicorn app.main:app --reload   # http://localhost:8000/docs
 | `Register in the catalog` fails with `400 Bad Request` | GitHub wasn't ready to serve the new files yet | Register it manually via **Register Existing Component** with its `catalog-info.yaml` URL |
 | CI fails at *Scan image with Trivy* | A fixable CRITICAL/HIGH vulnerability was found | Update the dependency, or rebuild to pick up the latest base image fixes |
 | My service is missing from the Catalog | The default filter is **Owned** (only your teams' services) | Click **All** in the left panel |
+| CI job *Deploy to dev* says `Skipping` | The deployment PR hasn't been merged yet | Ask `platform-team` to merge it |
+| Pod stuck in `ImagePullBackOff` right after the first merge | The first CI run hasn't published the image yet | Wait for the CI to finish; Kubernetes retries automatically |
+| `kubectl port-forward` returns the old version | It stays attached to the old pod | Restart it after each deployment |
 | The *Docs* tab takes a while | Docs are built on first view | Wait 1–3 minutes the first time |
 
 ## Removing a service

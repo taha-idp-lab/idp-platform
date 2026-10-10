@@ -4,9 +4,15 @@
 
 🚧 **Status:** work in progress — see [`JOURNAL.md`](JOURNAL.md) for progress.
 
-## ✅ What works today (v1)
+## ✅ What works today (v2)
 
-A developer fills a form in Backstage and gets, **in about 10 seconds**, a new GitHub repository with a working FastAPI service, registered in the catalog with its owner team.
+From a form in Backstage to a service running in Kubernetes in **under 4 minutes**, including the first CI run (tests, build, Trivy scan) and the platform team's approval. No ticket, no manual command:
+
+1. A GitHub repository is created with a working FastAPI service, tests, Dockerfile, Helm chart, docs and CODEOWNERS.
+2. The service is registered in the catalog with its owner team.
+3. CI runs lint and tests, builds the image, **scans it with Trivy**, and publishes it to GHCR.
+4. A deployment PR is opened in `idp-gitops`; once the platform team merges it, **ArgoCD deploys the service to Kubernetes**.
+5. Every later push to `main` is deployed to dev automatically (the CI commits the new image tag to `idp-gitops`). Rollback = `git revert`.
 
 <!-- screenshot: docs/images/template-run.png -->
 
@@ -47,7 +53,7 @@ See [`docs/architecture.md`](docs/architecture.md).
 - [x] **Phase 1** — Backstage running with GitHub auth and PostgreSQL
 - [x] **Phase 2 (v1)** — Catalog + first template: one click creates a repo
 - [x] **Phase 3** — Production-ready skeleton (CI, Trivy, Helm, `/metrics`, TechDocs)
-- [ ] **Phase 4 (v2)** — GitOps: form → service running in the cluster
+- [x] **Phase 4 (v2)** — GitOps: form → service running in the cluster
 - [ ] **Phase 5 (v3)** — Visibility: Kubernetes, ArgoCD, GitHub Actions plugins + Grafana
 - [ ] **Phase 6** — Second template, demo scenarios, final docs
 

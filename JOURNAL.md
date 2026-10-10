@@ -113,3 +113,15 @@ Next (Phase 4): kind cluster + ArgoCD + ApplicationSet → form-to-running-pod w
 - Robustness: `concurrency` group per service, `git pull --rebase` retry loop for concurrent deploys, skip gracefully if the deployment PR isn't merged yet.
 - Gotcha: a SHA like `1234567e8…` would be parsed by YAML as a float → `yq ... style="double"` keeps the tag a string.
 - ✅ `test-gitops`: code change pushed → 3 green jobs → bot commit in idp-gitops → new pod → "Hello from version 2, deployed by GitOps".
+
+## 2026-10-10 — Phase 4, step 7: end-to-end + rollback
+- New service `orders-v2`: form → repo + CI + catalog + deployment PR → merge → deployed in ~3 min 30 s (repo created 17:43:52, PR merged 17:47:11, ArgoCD deploying 17:47:24). Automated part after approval: ~13 s.
+- v2 and v3 code changes deployed to dev automatically (bot commits in idp-gitops).
+- Rollback: `git revert <deploy commit>` in idp-gitops → ArgoCD redeployed the previous SHA.
+- Rollback lesson #1: in a shared GitOps repo, revert by commit hash (never blindly HEAD), and wait for ArgoCD to sync before the next change.
+- Rollback lesson #2: reverting the first deploy commit restored `tag: latest`, which already pointed to the new image → no rollback. Rollbacks only work between immutable SHAs. Known limitation: a service's first deployment uses `latest`; the next push switches it to a SHA.
+- `kubectl port-forward` binds to one pod: restart it after every deployment (an Ingress would avoid this).
+
+## ✅ Phase 4 closed — v2
+Form → running pod in under 4 minutes, with a single human action (merging the deployment PR); continuous deployment to dev; rollback via git revert.
+Next (Phase 5): visibility in Backstage (Kubernetes, ArgoCD, GitHub Actions plugins) + Prometheus/Grafana.
