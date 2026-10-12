@@ -138,7 +138,7 @@ Next (Phase 5): visibility in Backstage (Kubernetes, ArgoCD, GitHub Actions plug
 - No backend: the browser calls the GitHub API with the signed-in user's own token (users only see CI of repos they can access). Uses the existing `github.com/project-slug` annotation.
 - ✅ `orders-v2` page: "GitHub Actions" tab with all runs + "Recent workflow runs" card on Overview.
 
-### Phase 5 — Step 3: ArgoCD plugin
+## 2026-10-12 — Phase 5, step 3: ArgoCD plugin
 
 - Installed `@roadiehq/backstage-plugin-argo-cd`: service pages now show the ArgoCD
   application status (sync/health) and deployment history.
@@ -157,7 +157,7 @@ Next (Phase 5): visibility in Backstage (Kubernetes, ArgoCD, GitHub Actions plug
     7007 and its environment (`/proc/<pid>/environ`). Lesson: when a config change
     "does not apply", check which process actually serves the port.
 
-### Phase 5 — Step 4: Observability (Prometheus + Grafana)
+## 2026-10-12 — Phase 5, step 4: Observability (Prometheus + Grafana)
 
 - Installed `kube-prometheus-stack` with Helm (`deploy/monitoring/values.yaml`), trimmed for a
   laptop: no Alertmanager, no node-exporter, no control-plane scraping (unreachable on kind).
@@ -180,3 +180,14 @@ Next (Phase 5): visibility in Backstage (Kubernetes, ArgoCD, GitHub Actions plug
     dropped under parallel requests. Restart loop in `port-forward.sh`, then root cause:
     the WebSocket port-forward (default since kubectl 1.31) → `KUBECTL_PORT_FORWARD_WEBSOCKETS=false`.
   - Long term: replace port-forwards with an Ingress (the kind cluster already maps 8080/8443).
+
+## ✅ Phase 5 closed — v3
+Each service has one page in Backstage showing its ArgoCD sync/health and deployment history,
+Kubernetes pods, CI runs, docs and a link to its Grafana dashboard. Monitoring is self-service:
+the template's Helm chart ships a ServiceMonitor, so new services are scraped and appear in the
+dashboard with no manual step. All integrations are read-only (ArgoCD `role:readonly`,
+Kubernetes ServiceAccount without Secrets, GitHub through the user's own token).
+Docs: README v3, `docs/local-setup.md` (daily start-up, secrets, troubleshooting), developer
+guide section "Observe your service", removal procedure now starts with `idp-gitops`.
+Known limitation: ArgoCD and Grafana are reached through port-forwards (local only).
+Next (Phase 6): Ingress, second template, demo scenarios (incident, rollback), screenshots, demo video.
