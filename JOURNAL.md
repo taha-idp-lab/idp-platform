@@ -137,3 +137,22 @@ Next (Phase 5): visibility in Backstage (Kubernetes, ArgoCD, GitHub Actions plug
 - `@backstage-community/plugin-github-actions` 1.5.0 (supports the new frontend system via `./alpha`), auto-discovered with `app.packages: all` → no code change.
 - No backend: the browser calls the GitHub API with the signed-in user's own token (users only see CI of repos they can access). Uses the existing `github.com/project-slug` annotation.
 - ✅ `orders-v2` page: "GitHub Actions" tab with all runs + "Recent workflow runs" card on Overview.
+
+### Phase 5 — Step 3: ArgoCD plugin
+
+- Installed `@roadiehq/backstage-plugin-argo-cd`: service pages now show the ArgoCD
+  application status (sync/health) and deployment history.
+- Least privilege: a dedicated ArgoCD local account `backstage` (`apiKey` only, no UI login)
+  bound to `role:readonly`. Verified: read = 200, sync = 403 (permission denied).
+- The browser never talks to ArgoCD: the Backstage backend proxy (`/argocd/api`) injects
+  the token server-side. Cards are filtered to components with the `argocd/app-name`
+  annotation (added to the template skeleton and the 3 deployed services).
+- Issues:
+  - `kubectl port-forward` exits on the first broken stream (and when the pod is replaced
+    by `helm upgrade`) → `deploy/argocd/port-forward.sh` restarts it in a loop.
+  - `argocd` CLI could not reach the forwarded port while `curl` could → generated the
+    token through the ArgoCD REST API instead (`/api/v1/session`, `/api/v1/account/backstage/token`).
+  - Persistent 401: an old backend started before the token existed was still bound to
+    port 7007, so restarts never took effect. Diagnosed by checking which PID listens on
+    7007 and its environment (`/proc/<pid>/environ`). Lesson: when a config change
+    "does not apply", check which process actually serves the port.
