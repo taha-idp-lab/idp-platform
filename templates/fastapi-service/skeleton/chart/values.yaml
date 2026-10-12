@@ -24,3 +24,9 @@ ingress:
   enabled: false
   className: nginx
   host: ${{ values.name }}.dev.local
+
+# Prometheus scraping of GET /metrics (requires the Prometheus Operator in the cluster)
+metrics:
+  serviceMonitor:
+    enabled: true
+    interval: 30s
