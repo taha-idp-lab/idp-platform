@@ -1,0 +1,58 @@
+# Read-only identity used by the Backstage Kubernetes plugin.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: backstage
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: backstage-reader
+  namespace: backstage
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: backstage-read-only
+rules:
+  - apiGroups: ["", "apps", "autoscaling", "networking.k8s.io"]
+    resources:
+      - pods
+      - pods/log
+      - services
+      - configmaps
+      - limitranges
+      - resourcequotas
+      - deployments
+      - replicasets
+      - statefulsets
+      - daemonsets
+      - horizontalpodautoscalers
+      - ingresses
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: backstage-read-only
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: backstage-read-only
+subjects:
+  - kind: ServiceAccount
+    name: backstage-reader
+    namespace: backstage
+---
+# Long-lived token for local use (in production: short-lived tokens or workload identity)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: backstage-reader-token
+  namespace: backstage
+  annotations:
+    kubernetes.io/service-account.name: backstage-reader
+type: kubernetes.io/service-account-token

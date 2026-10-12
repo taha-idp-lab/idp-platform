@@ -242,6 +242,17 @@ catalog:
 
 kubernetes:
   # see https://backstage.io/docs/features/kubernetes/configuration for kubernetes configuration options
+  serviceLocatorMethod:
+    type: multiTenant
+  clusterLocatorMethods:
+    - type: config
+      clusters:
+        - name: kind-idp
+          url: ${K8S_CLUSTER_URL}
+          authProvider: serviceAccount
+          serviceAccountToken: ${K8S_SA_TOKEN}
+          caData: ${K8S_CA_DATA}
+          skipMetricsLookup: true
 
 # see https://backstage.io/docs/permissions/getting-started for more on the permission framework
 permission:

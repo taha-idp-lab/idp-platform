@@ -6,6 +6,7 @@ metadata:
   annotations:
     github.com/project-slug: taha-idp-lab/${{ values.name }}
     backstage.io/techdocs-ref: dir:.
+    backstage.io/kubernetes-id: ${{ values.name }}
   tags:
     - python
     - fastapi
