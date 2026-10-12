@@ -125,3 +125,10 @@ Next (Phase 4): kind cluster + ArgoCD + ApplicationSet → form-to-running-pod w
 ## ✅ Phase 4 closed — v2
 Form → running pod in under 4 minutes, with a single human action (merging the deployment PR); continuous deployment to dev; rollback via git revert.
 Next (Phase 5): visibility in Backstage (Kubernetes, ArgoCD, GitHub Actions plugins) + Prometheus/Grafana.
+
+## 2026-10-12 — Phase 5, step 1: Kubernetes plugin
+- Plugin already installed (frontend auto-discovered with `app.packages: all`, backend module in `index.ts`); only configuration was missing.
+- Read-only identity: ServiceAccount `backstage-reader` + ClusterRole (get/list/watch on workloads, no Secrets) — `deploy/backstage/k8s-rbac.yaml`. Verified with `kubectl auth can-i`.
+- `app-config.yaml`: `multiTenant` locator, one `config` cluster `kind-idp`, `caData` (TLS verified, no `skipTLSVerify`), `skipMetricsLookup` (no metrics-server). URL / CA / token in `.env`.
+- Annotation `backstage.io/kubernetes-id` added to the skeleton and to the 3 deployed services; matches the label already set by the Helm chart since Phase 3.
+- ✅ `orders-v2` page shows its Deployment, pod (Running, no errors) and Service.
