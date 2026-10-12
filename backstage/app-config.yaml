@@ -6,6 +6,15 @@ app:
   packages: all
 
   extensions:
+    # ArgoCD cards only on components that declare an ArgoCD application
+    - entity-card:argocd/overviewCard:
+        config:
+          filter:
+            metadata.annotations.argocd/app-name: { $exists: true }
+    - entity-card:argocd/historyCard:
+        config:
+          filter:
+            metadata.annotations.argocd/app-name: { $exists: true }
     # Default landing page configuration.
     # The catalog is mounted at /catalog by default but is overridden here to
     # serve as the root page. To switch to the Home page, comment out the
@@ -143,12 +152,16 @@ integrations:
         - $include: github-app-idpbackstagetaha-credentials.yaml
 
 proxy:
-  ### Example for how to add a proxy endpoint for the frontend.
-  ### A typical reason to do this is to handle HTTPS and CORS for internal services.
-  # endpoints:
-  #   '/test':
-  #     target: 'https://example.com'
-  #     changeOrigin: true
+  endpoints:
+    # ArgoCD API (reached through `kubectl port-forward svc/argocd-server -n argocd 8081:80`)
+    '/argocd/api':
+      target: http://localhost:8081/api/v1/
+      changeOrigin: true
+      headers:
+        Authorization: Bearer ${ARGOCD_AUTH_TOKEN}
+
+argocd:
+  baseUrl: http://localhost:8081
 
 # Reference documentation http://backstage.io/docs/features/techdocs/configuration
 # Note: After experimenting with basic setup, use CI/CD to generate docs

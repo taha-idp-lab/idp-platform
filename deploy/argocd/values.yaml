@@ -6,6 +6,13 @@ configs:
     # TLS is not needed locally (accessed through kubectl port-forward).
     # In production, TLS would be terminated by an ingress controller.
     server.insecure: true
+  cm:
+    # Local account used by Backstage: API token only, no UI login
+    accounts.backstage: apiKey
+  rbac:
+    # Backstage can read applications, never sync or delete them
+    policy.csv: |
+      g, backstage, role:readonly
 
 # Disabled to save resources: no SSO (Dex) and no notifications needed locally.
 dex:
