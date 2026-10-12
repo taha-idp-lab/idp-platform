@@ -158,7 +158,7 @@ proxy:
       target: http://localhost:8081/api/v1/
       changeOrigin: true
       headers:
-        Authorization: Bearer ${ARGOCD_AUTH_TOKEN}
+        authorization: Bearer ${ARGOCD_AUTH_TOKEN}
 
 argocd:
   baseUrl: http://localhost:8081
