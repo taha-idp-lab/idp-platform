@@ -156,3 +156,27 @@ Next (Phase 5): visibility in Backstage (Kubernetes, ArgoCD, GitHub Actions plug
     port 7007, so restarts never took effect. Diagnosed by checking which PID listens on
     7007 and its environment (`/proc/<pid>/environ`). Lesson: when a config change
     "does not apply", check which process actually serves the port.
+
+### Phase 5 — Step 4: Observability (Prometheus + Grafana)
+
+- Installed `kube-prometheus-stack` with Helm (`deploy/monitoring/values.yaml`), trimmed for a
+  laptop: no Alertmanager, no node-exporter, no control-plane scraping (unreachable on kind).
+  Grafana admin password lives in a Kubernetes Secret created outside Git.
+- Self-service monitoring: the template's Helm chart now ships a `ServiceMonitor`, so every
+  service is scraped by Prometheus as soon as it is deployed — no central target list.
+  The ServiceMonitor is only rendered when the cluster has the Prometheus Operator CRD
+  (`.Capabilities.APIVersions.Has`), so the chart stays deployable anywhere.
+  Rolled out to the 3 existing services; all targets `up=1`.
+- One generic "FastAPI services" dashboard (golden signals: pods up, request rate, 5xx error
+  rate, p50/p95/p99 latency) with a Service dropdown fed by Prometheus — new services appear
+  automatically. Dashboard as code: `deploy/monitoring/dashboards/generate.py` renders the
+  ConfigMap loaded by the Grafana sidecar. Metric names checked against the instrumentator output.
+- Each service page in Backstage links to its pre-filtered dashboard (`metadata.links`).
+- Issues:
+  - Interrupted `helm install --wait` with Ctrl+C while images were pulling → release marked
+    failed; fixed with `helm upgrade --install` (idempotent).
+  - ServiceMonitors missing at first: ArgoCD had not polled Git yet (3 min) → hard refresh.
+  - Grafana "failed to load application files" / "Failed to fetch": `kubectl port-forward`
+    dropped under parallel requests. Restart loop in `port-forward.sh`, then root cause:
+    the WebSocket port-forward (default since kubectl 1.31) → `KUBECTL_PORT_FORWARD_WEBSOCKETS=false`.
+  - Long term: replace port-forwards with an Ingress (the kind cluster already maps 8080/8443).
