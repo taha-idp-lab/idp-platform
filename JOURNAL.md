@@ -132,3 +132,8 @@ Next (Phase 5): visibility in Backstage (Kubernetes, ArgoCD, GitHub Actions plug
 - `app-config.yaml`: `multiTenant` locator, one `config` cluster `kind-idp`, `caData` (TLS verified, no `skipTLSVerify`), `skipMetricsLookup` (no metrics-server). URL / CA / token in `.env`.
 - Annotation `backstage.io/kubernetes-id` added to the skeleton and to the 3 deployed services; matches the label already set by the Helm chart since Phase 3.
 - ✅ `orders-v2` page shows its Deployment, pod (Running, no errors) and Service.
+
+## 2026-10-12 — Phase 5, step 2: GitHub Actions plugin
+- `@backstage-community/plugin-github-actions` 1.5.0 (supports the new frontend system via `./alpha`), auto-discovered with `app.packages: all` → no code change.
+- No backend: the browser calls the GitHub API with the signed-in user's own token (users only see CI of repos they can access). Uses the existing `github.com/project-slug` annotation.
+- ✅ `orders-v2` page: "GitHub Actions" tab with all runs + "Recent workflow runs" card on Overview.
